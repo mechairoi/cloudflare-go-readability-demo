@@ -28,10 +28,6 @@
 		global.require = require;
 	}
 
-	if (!global.fs && global.require) {
-		global.fs = require("fs");
-	}
-
 	const enosys = () => {
 		const err = new Error("not implemented");
 		err.code = "ENOSYS";
@@ -101,7 +97,7 @@
 	}
 
 	if (!global.crypto) {
-		const nodeCrypto = require("crypto");
+		const nodeCrypto = require("node:crypto");
 		global.crypto = {
 			getRandomValues(b) {
 				nodeCrypto.randomFillSync(b);
@@ -119,11 +115,11 @@
 	}
 
 	if (!global.TextEncoder) {
-		global.TextEncoder = require("util").TextEncoder;
+		global.TextEncoder = require("node:util").TextEncoder;
 	}
 
 	if (!global.TextDecoder) {
-		global.TextDecoder = require("util").TextDecoder;
+		global.TextDecoder = require("node:util").TextDecoder;
 	}
 
 	// End of polyfills for common API.
@@ -300,7 +296,7 @@
 					"syscall/js.finalizeRef": (v_ref) => {
 						// Note: TinyGo does not support finalizers so this should never be
 						// called.
-						console.error('syscall/js.finalizeRef not implemented');
+						console.log('syscall/js.finalizeRef not implemented');
 					},
 
 					// func stringVal(value string) ref
@@ -502,26 +498,5 @@
 				return event.result;
 			};
 		}
-	}
-
-	if (
-		global.require &&
-		global.require.main === module &&
-		global.process &&
-		global.process.versions &&
-		!global.process.versions.electron
-	) {
-		if (process.argv.length != 3) {
-			console.error("usage: go_js_wasm_exec [wasm binary] [arguments]");
-			process.exit(1);
-		}
-
-		const go = new Go();
-		WebAssembly.instantiate(fs.readFileSync(process.argv[2]), go.importObject).then((result) => {
-			return go.run(result.instance);
-		}).catch((err) => {
-			console.error(err);
-			process.exit(1);
-		});
 	}
 })();
