@@ -7,9 +7,16 @@
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "fmt": "biome format --write ./src",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --apply ./src",
+    "ci": "biome ci ./src",
+    "check:apply": "biome check --apply ./src",
+    "build:wasm": "tinygo build -o src/readability.wasm -no-debug -target wasm ./readability.go"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.2",
     "@cloudflare/vitest-pool-workers": "^0.4.5",
     "@cloudflare/workers-types": "^4.20240620.0",
     "typescript": "^5.4.5",
